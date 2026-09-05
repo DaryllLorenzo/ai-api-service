@@ -8,29 +8,29 @@ API de servicios de IA con **FastAPI** optimizada para dispositivos de bajos rec
 
 ---
 
-## 🚀 Inicio Rápido
+## 🚀 Inicio Rápido (Baremetal - Linux)
 
 ```bash
 # 1. Crear entorno virtual
-python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Linux/macOS
+python3 -m venv venv
+source venv/bin/activate
 
 # 2. Instalar dependencias
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # 3. Configurar variables de entorno
-copy .env.example .env
-# Editar .env con tu configuración
+cp .env.example .env
+# Editar .env con tu configuración (modelos, API keys, etc.)
 
 # 4. Crear primera clave de administrador
-python scripts/init_admin.py
+python init_admin.py
 
 # 5. Ejecutar la API
-python app/main.py
-# o con uvicorn
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+> **Windows:** Reemplazar `python3` por `python`, `cp` por `copy`, y `source venv/bin/activate` por `venv\Scripts\activate`.
 
 **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
@@ -144,65 +144,61 @@ Permite:
 
 ## 🐳 Docker
 
-**Dockerfile resumido:**
+### Levantar con Docker Compose
 
-```dockerfile
-FROM python:3.11-slim
+```bash
+# 1. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tu configuración
 
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    DEBIAN_FRONTEND=noninteractive
+# 2. Construir y levantar
+docker compose up -d --build
 
-WORKDIR /app
+# 3. Ver logs
+docker compose logs -f api
 
-RUN apt-get update && apt-get install -y \
-    gcc g++ git ffmpeg libsm6 libxext6 libgomp1 \
-    && rm -rf /var/lib/apt/lists/*
-
-# PyTorch CPU
-RUN pip install --upgrade pip && \
-    pip install torch==2.7.1+cpu torchvision torchaudio \
-    --index-url https://download.pytorch.org/whl/cpu
-
-COPY requirements-docker.txt .
-RUN pip install -r requirements-docker.txt
-
-COPY ./app /app/app
-COPY ./static /app/static
-RUN mkdir -p /app/data/models
-
-EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 4. Detener
+docker compose down
 ```
 
-**docker-compose.yml resumido:**
+### Build manual (sin compose)
+
+```bash
+docker build -t ai-api-service .
+docker run -d \
+  --name ai_api \
+  -p 8000:8000 \
+  -v $(pwd)/data/models:/app/data/models \
+  -v $(pwd)/.env:/app/.env:ro \
+  ai-api-service
+```
+
+### Multi-plataforma (amd64 + arm64)
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t ai-api-service .
+```
+
+### Hot reload (desarrollo)
+
+Descomentar en `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
-services:
-  api:
-    build: .
-    container_name: ai_api_service
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./data/models:/app/data/models
-      - ./.env:/app/.env
-    environment:
-      - ENVIRONMENT=production
-      - DEBUG=False
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '4'
-          memory: 8G
-        reservations:
-          memory: 4G
+volumes:
+  - ./app:/app/app
 ```
 
-> Permite montar modelos y `.env` para cambios sin rebuild. Se puede usar hot reload montando `./app:/app/app`.
+### Dockerfile (multi-stage)
+
+```dockerfile
+# syntax=docker/dockerfile:1
+FROM python:3.11-slim AS builder
+# ... instala gcc, torch CPU, requirements
+FROM python:3.11-slim
+# ... instala ffmpeg, copia solo binarios del builder
+```
+
+> Los modelos se montan como volumen (`./data/models:/app/data/models`) para persistir entre rebuilds.
 
 ---
 

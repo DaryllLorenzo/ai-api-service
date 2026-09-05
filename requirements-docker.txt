@@ -1,28 +1,30 @@
+# Build tools (necesarios para paquetes con setup.py)
+setuptools>=70.0.0
+wheel
+
 # Core FastAPI
-fastapi==0.95.2
-uvicorn[standard]==0.34.3
-python-multipart==0.0.20
-python-dotenv==1.1.0
-pydantic==1.10.22
-pydantic-settings==2.0.3
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+python-dotenv==1.0.1
+pydantic==2.9.2
+pydantic-settings==2.5.2
 
 # Security & Auth
-slowapi
+slowapi==0.1.9
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-cryptography==45.0.4
+cryptography==43.0.1
 
 # Logging
-loguru
-coloredlogs==15.0.1
+loguru==0.7.2
 
-# AI/ML Core (SIN torch, se instala en el Dockerfile)
-transformers==4.52.4
-sentence-transformers==4.1.0
-accelerate==1.7.0
-safetensors==0.5.3
-tokenizers==0.21.1
-huggingface-hub==0.33.0
+# AI/ML Core (torch se instala por separado en el Dockerfile)
+transformers==4.44.2
+sentence-transformers==3.1.1
+accelerate==0.34.2
+safetensors==0.4.5
+tokenizers==0.19.1
+huggingface-hub==0.25.0
 
 # LLM
 llama-cpp-python==0.3.16
@@ -31,39 +33,18 @@ llama-cpp-python==0.3.16
 openai-whisper==20250625
 ffmpeg-python==0.2.0
 
-# NLP
-spacy==3.8.7
-nltk==3.9.1
-https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.8.0/es_core_news_sm-3.8.0-py3-none-any.whl
-
-# Embeddings & Vector DB
-chromadb==1.0.13
-
 # OCR
-pillow==11.2.1
-lxml==5.4.0
+easyocr==1.7.1
+pillow==10.4.0
 
 # Data Processing
-numpy==2.3.0
-pandas==3.0.0
-scikit-learn==1.7.0
-scipy==1.15.3
+numpy==1.26.4
+pandas==2.2.3
+scikit-learn==1.5.2
+scipy==1.14.1
 
 # Utils
-requests==2.32.4
-aiohttp
-tenacity==9.1.2
-tqdm==4.67.1
+requests==2.32.3
+aiohttp==3.10.5
+tqdm==4.66.5
 python-dateutil==2.9.0.post0
-
-# Document Processing
-PyPDF2==3.0.1
-python-docx==1.2.0
-
-# Database
-sqlalchemy==2.0.15
-psycopg2-binary==2.9.10
-
-# Email
-aiosmtplib==5.0.0
-email-validator==2.2.0

@@ -1,0 +1,77 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv
+env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Models (se montan como volumen)
+data/models/
+
+# Cache
+.cache
+.huggingface
+.mypy_cache
+.pytest_cache
+
+# Logs
+*.log
+logs/
+
+# Testing
+tests/
+.coverage
+htmlcov/
+.tox/
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Docs
+docs/
+README.md
+LICENSE.txt
+assets/
+
+# Docker
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp
+temp/
+tmp/
+*.tmp
+
+# Audio/Video processing
+*.mp3.temp
+*.wav.temp
+
+# Backup
+*.bak
+*.backup

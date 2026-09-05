@@ -2,7 +2,7 @@
 
 # =============================================================
 # Multi-platform: linux/amd64, linux/arm64
-# Build: docker build -t ai-api-service .
+# Build: docker build -t fastneural .
 # Run:   docker compose up
 # =============================================================
 

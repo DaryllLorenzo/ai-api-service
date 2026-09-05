@@ -18,4 +18,5 @@ junto con este programa. Si no, visita <http://www.gnu.org/licenses/>.
 
 from app.factory import create_app
 
+# FastNeural exposes the API and its server-rendered operations panel from one process.
 app = create_app()

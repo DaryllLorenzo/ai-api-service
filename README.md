@@ -1,7 +1,7 @@
-# AI API Service
+# FastNeural
 
 <p>
-  <img src="assets/ai-api-service.png" alt="AI API Service" width="500"/>
+  <img src="assets/horizontal.png" alt="FastNeural" width="500"/>
 </p>
 
 API de servicios de IA con **FastAPI** optimizada para dispositivos de bajos recursos. Incluye generación de texto, transcripción de audio, embeddings, OCR y capacidades de **Business AI** (clasificación, sentimiento, NER, resumen y traducción).
@@ -164,19 +164,19 @@ docker compose down
 ### Build manual (sin compose)
 
 ```bash
-docker build -t ai-api-service .
+docker build -t fastneural .
 docker run -d \
-  --name ai_api \
+  --name fastneural \
   -p 8000:8000 \
   -v $(pwd)/data/models:/app/data/models \
   -v $(pwd)/.env:/app/.env:ro \
-  ai-api-service
+  fastneural
 ```
 
 ### Multi-plataforma (amd64 + arm64)
 
 ```bash
-docker buildx build --platform linux/amd64,linux/arm64 -t ai-api-service .
+docker buildx build --platform linux/amd64,linux/arm64 -t fastneural .
 ```
 
 ### Hot reload (desarrollo)

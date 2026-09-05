@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
+import mimetypes
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -11,7 +12,7 @@ from loguru import logger
 from app.config import settings
 from app.auth.rate_limit import limiter
 from app.models.loader import model_loader
-from app.routers import admin, business, generate, ocr, transcribe, embeddings
+from app.routers import admin, admin_ui, business, generate, ocr, transcribe, embeddings
 
 
 @asynccontextmanager
@@ -21,7 +22,7 @@ async def lifespan(app: FastAPI):
     Reemplaza los eventos startup/shutdown deprecados.
     """
     # === STARTUP ===
-    logger.info("🚀 Iniciando AI API Service v{}", settings.api_version)
+    logger.info("🚀 Iniciando FastNeural v{}", settings.api_version)
     
     try:
         model_loader.load_all()
@@ -37,12 +38,12 @@ async def lifespan(app: FastAPI):
         import traceback
         logger.debug(traceback.format_exc())
     
-    logger.info("✅ AI API Service iniciado correctamente")
+    logger.info("✅ FastNeural iniciado correctamente")
     
     yield  # La aplicación está corriendo aquí
     
     # === SHUTDOWN ===
-    logger.info("👋 Deteniendo AI API Service")
+    logger.info("👋 Deteniendo FastNeural")
     # Aquí puedes liberar recursos si es necesario
     logger.info("✅ Recursos liberados correctamente")
 
@@ -55,7 +56,7 @@ def create_app() -> FastAPI:
         FastAPI: Instancia completamente configurada de la aplicación
     """
     app = FastAPI(
-        title="AI API Service",
+        title="FastNeural",
         description="API de servicios de IA con modelos optimizados locales",
         version=settings.api_version,
         docs_url=None,
@@ -79,7 +80,9 @@ def create_app() -> FastAPI:
 
 def _configure_static(app: FastAPI):
     """Configura servidor de archivos estáticos para Swagger UI offline."""
-    static_dir = Path("static")
+    # Register WOFF2 explicitly; Windows may otherwise serve it as text/plain.
+    mimetypes.add_type("font/woff2", ".woff2")
+    static_dir = Path("app") / "static"
     if static_dir.exists():
         app.mount("/static", StaticFiles(directory=static_dir), name="static")
         logger.info("📄 Archivos estáticos montados en /static")
@@ -118,6 +121,7 @@ def _configure_routes(app: FastAPI):
         ("embeddings", embeddings.router),
         ("ocr", ocr.router), 
         ("business", business.router),
+        ("admin_ui", admin_ui.router),
     ]
     
     for name, router in routers:
@@ -135,7 +139,7 @@ def _configure_routes(app: FastAPI):
     async def root():
         """Endpoint raíz con información básica de la API."""
         return {
-            "message": "AI API Service",
+            "message": "FastNeural",
             "version": settings.api_version,
             "docs": "/docs",
             "health": "/health",
@@ -170,7 +174,7 @@ def _configure_routes(app: FastAPI):
                 <link rel="stylesheet" href="/static/swagger-ui/swagger-ui.css">
                 <link rel="icon" href="/static/swagger-ui/favicon-32x32.png" sizes="32x32">
                 <link rel="icon" href="/static/swagger-ui/favicon-16x16.png" sizes="16x16">
-                <title>AI API Service {settings.api_version} - Swagger UI</title>
+                <title>FastNeural {settings.api_version} - Swagger UI</title>
                 <style>
                     html {{ box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }}
                     *, *:before, *:after {{ box-sizing: inherit; }}

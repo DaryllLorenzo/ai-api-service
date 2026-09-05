@@ -5,9 +5,15 @@ services:
     ports:
       - "8000:8000"
     volumes:
+<<<<<<< Updated upstream
       # Modelos LLM/Whisper (persisten entre rebuilds)
       - ./data/models:/app/data/models
       # Cache de modelos auto-descargados (Whisper, Embeddings, etc.)
+=======
+      # Data completa (modelos + DB de API keys)
+      - ./data:/app/data
+      # Cache de modelos auto-descargados
+>>>>>>> Stashed changes
       - model-cache:/root/.cache
       # Configuracion sin rebuild
       - ./.env:/app/.env:ro

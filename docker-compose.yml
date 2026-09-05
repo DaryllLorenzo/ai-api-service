@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     build: .
@@ -7,20 +5,18 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Montar directorio de modelos (CLAVE: modelos externos)
-      - ./data/models:/app/data/models
-      
-      # Opcional: montar .env para cambios sin rebuild
-      - ./.env:/app/.env
-      
-      # Opcional: para desarrollo (hot reload)
+      # Data completa (modelos + DB de API keys)
+      - ./data:/app/data
+      # Cache de modelos auto-descargados
+      - model-cache:/root/.cache
+      # Configuracion sin rebuild
+      - ./.env:/app/.env:ro
+      # Hot reload (descomentar para desarrollo)
       # - ./app:/app/app
     environment:
       - ENVIRONMENT=production
       - DEBUG=False
     restart: unless-stopped
-    
-    # Opcional: limitar recursos
     deploy:
       resources:
         limits:
@@ -28,3 +24,6 @@ services:
           memory: 8G
         reservations:
           memory: 4G
+
+volumes:
+  model-cache:

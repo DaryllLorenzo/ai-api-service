@@ -12,7 +12,7 @@ from loguru import logger
 from app.config import settings
 from app.auth.rate_limit import limiter
 from app.models.loader import model_loader
-from app.routers import admin, admin_ui, business, generate, ocr, transcribe, embeddings
+from app.routers import admin, admin_ui, business, generate, ocr, transcribe, embeddings, huggingface
 
 
 @asynccontextmanager
@@ -122,6 +122,7 @@ def _configure_routes(app: FastAPI):
         ("ocr", ocr.router), 
         ("business", business.router),
         ("admin_ui", admin_ui.router),
+        ("huggingface", huggingface.router),
     ]
     
     for name, router in routers:

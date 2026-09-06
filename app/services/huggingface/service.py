@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-import requests
+import httpx
 from huggingface_hub import HfApi
 
 from app.services.huggingface.tasks import Task, TaskStatus, task_manager
@@ -73,10 +73,10 @@ def list_models(
 
 
 def _download_file(task: Task, url: str, dest: Path, filename: str):
-    with requests.get(url, stream=True, allow_redirects=True) as response:
+    with httpx.stream("GET", url, follow_redirects=True) as response:
         response.raise_for_status()
         with open(dest / filename, "wb") as f:
-            for chunk in response.iter_content(CHUNK_SIZE):
+            for chunk in response.iter_bytes(CHUNK_SIZE):
                 if task.is_cancelled():
                     return
                 f.write(chunk)
